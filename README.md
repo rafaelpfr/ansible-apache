@@ -1,6 +1,6 @@
-# Automating the configuration of an Apache server with Ansible
+# Automating the Deploy of a Web Page in Apache with Ansible
 
-## The Ansible playbook for this project is divided into 3 plays
+## The master and managed nodes run CentOS 7 and the Ansible playbook for this project is divided into the following 3 plays:
 
 * The tasks in the first play install and start apache on the managed node, copy to it the index file used for the website and start and configure firewalld to allow http connections.
 
