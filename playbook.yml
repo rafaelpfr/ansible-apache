@@ -1,0 +1,60 @@
+---
+- name: Install Apache, copy website index page and configure firewalld
+  hosts: all
+  tasks:
+    - name: Install httpd package
+      yum:
+        name: httpd
+        state: latest
+    - name: Copy file index.html
+      copy:
+        src: ./index.html
+        dest: /var/www/html
+    - name: Start Apache
+      service:
+        name: httpd
+        state: started
+    - name: Start firewalld
+      service:
+        name: firewalld
+        state: started
+    - name: Configure httpd in firewalld
+      firewalld:
+        service: http
+        permanent: yes
+        immediate: yes
+        state: enabled
+
+
+- name: Testing Apache
+  hosts: all
+  tasks:
+    - name: Request remote machine in port 80
+      uri: 
+        url: http://192.168.0.44
+        return_content: yes
+      register: webpage
+
+    - name: Fail if Hello is not in the page content
+      fail:
+      when: "'Hello' not in webpage.content"
+
+
+- name: Uninstall Apache 
+  hosts: all
+  tasks:
+    - name: Uninstall httpd package
+      yum:
+        name: httpd
+        state: absent
+    - name: Remove /var/www/html/index.html
+      file:
+        path: /var/www/html/index.html
+        state: absent
+    - name: Remove the http service in firewalld
+      firewalld:
+        service: http
+        permanent: yes
+        immediate: yes
+        state: disabled
+...
